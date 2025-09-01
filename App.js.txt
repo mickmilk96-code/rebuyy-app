@@ -1,0 +1,75 @@
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, Button, TextInput, FlatList, TouchableOpacity } from 'react-native';
+
+// Oggetti di prova
+const dummyItems = [
+  { id: '1', title: 'Giacca nera', price: '25€', type: 'fisso' },
+  { id: '2', title: 'Scarpe oro', price: 'asta', type: 'asta', timer: '10:00' },
+];
+
+export default function App() {
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [username, setUsername] = useState('');
+  const [credits, setCredits] = useState(0);
+
+  const handleLogin = () => setLoggedIn(true);
+  const buySingle = () => setCredits(credits + 1);
+  const buyBundle5 = () => setCredits(credits + 5);
+  const buyBundle10 = () => setCredits(credits + 10);
+
+  if (!loggedIn) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>Rebuy</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Nickname"
+          onChangeText={setUsername}
+          value={username}
+        />
+        <Button title="Login" onPress={handleLogin} color="#FFD700" />
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Ciao {username}!</Text>
+      <Text style={styles.subtitle}>Crediti: {credits}</Text>
+      <View style={styles.bundleRow}>
+        <Button title="Singolo 2€" onPress={buySingle} color="#FFD700" />
+        <Button title="Bundle 5 ingressi 8€" onPress={buyBundle5} color="#FFD700" />
+        <Button title="Bundle 10 ingressi 15€" onPress={buyBundle10} color="#FFD700" />
+      </View>
+      <Text style={styles.subtitle}>Oggetti in vendita / aste:</Text>
+      <FlatList
+        data={dummyItems}
+        keyExtractor={item => item.id}
+        renderItem={({ item }) => (
+          <View style={styles.card}>
+            <Text style={styles.itemTitle}>{item.title}</Text>
+            <Text style={styles.itemPrice}>{item.price}</Text>
+            {item.type === 'asta' && <Text style={styles.timer}>Timer: {item.timer}</Text>}
+            <TouchableOpacity style={styles.button}>
+              <Text style={styles.buttonText}>Partecipa</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#FFFFFF', alignItems: 'center', paddingTop: 50 },
+  title: { fontSize: 32, fontWeight: 'bold', color: '#000000', marginBottom: 20 },
+  subtitle: { fontSize: 20, color: '#000000', marginVertical: 10 },
+  input: { borderColor: '#000000', borderWidth: 1, width: '80%', marginBottom: 10, padding: 10 },
+  bundleRow: { flexDirection: 'row', justifyContent: 'space-around', width: '100%', marginBottom: 20 },
+  card: { borderColor: '#000000', borderWidth: 1, borderRadius: 10, padding: 10, marginVertical: 5, width: '90%' },
+  itemTitle: { fontSize: 18, color: '#000000', fontWeight: 'bold' },
+  itemPrice: { fontSize: 16, color: '#FFD700' },
+  timer: { fontSize: 14, color: '#000000' },
+  button: { marginTop: 10, backgroundColor: '#000000', padding: 10, borderRadius: 5, alignItems: 'center' },
+  buttonText: { color: '#FFD700', fontWeight: 'bold' },
+});
